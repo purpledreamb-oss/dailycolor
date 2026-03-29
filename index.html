@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日日一色 | Daily Color</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0eb;
+  --text: #5a5550;
+  --text-light: #8a8580;
+  --accent: #b8a99a;
+  --border: #d5cec7;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Serif TC', 'Cormorant Garamond', serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ====== LOADING SCREEN ====== */
+#loading-screen {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+  z-index: 9999;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#loading-screen.hidden { opacity: 0; visibility: hidden; }
+#loading-screen .title-jp {
+  font-size: 2.4rem; font-weight: 300; letter-spacing: 12px; color: var(--text);
+}
+#loading-screen .subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem; letter-spacing: 6px; color: var(--text-light);
+  text-transform: uppercase;
+}
+.loading-dots { display: flex; gap: 8px; }
+.loading-dots span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.4s infinite ease-in-out;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,80%,100%{opacity:0.3;transform:scale(0.8)} 40%{opacity:1;transform:scale(1.1)} }
+
+/* ====== NAVIGATION ====== */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 100;
+  background: rgba(245,240,235,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: transform 0.3s ease;
+}
+nav .logo {
+  font-size: 1.2rem; font-weight: 400; letter-spacing: 6px;
+  cursor: pointer;
+}
+nav .logo span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem; letter-spacing: 4px; color: var(--text-light);
+  display: block; margin-top: 2px;
+}
+nav .nav-links { display: flex; gap: 32px; list-style: none; }
+nav .nav-links a {
+  text-decoration: none; color: var(--text-light);
+  font-size: 0.85rem; letter-spacing: 2px;
+  font-family: 'Noto Sans TC', sans-serif; font-weight: 300;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+nav .nav-links a:hover { color: var(--text); }
+
+/* ====== HERO SECTION ====== */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 120px 40px 60px;
+  text-align: center;
+}
+#hero h1 {
+  font-size: 3.6rem; font-weight: 300; letter-spacing: 16px;
+  margin-bottom: 12px;
+}
+#hero .en-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; letter-spacing: 8px; color: var(--text-light);
+  text-transform: uppercase; margin-bottom: 40px;
+}
+#hero .tagline {
+  font-size: 1.05rem; font-weight: 300; line-height: 2.2;
+  color: var(--text-light); max-width: 500px; margin-bottom: 48px;
+}
+#hero .cta-btn {
+  display: inline-block;
+  padding: 14px 48px;
+  border: 1px solid var(--text);
+  color: var(--text);
+  text-decoration: none;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.85rem; letter-spacing: 4px; font-weight: 300;
+  transition: all 0.4s ease;
+  cursor: pointer; background: transparent;
+}
+#hero .cta-btn:hover {
+  background: var(--text); color: var(--bg);
+}
+
+/* ====== TODAY'S COLOR PREVIEW ====== */
+.today-preview {
+  width: 120px; height: 120px; border-radius: 50%;
+  margin: 0 auto 32px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  transition: transform 0.6s ease;
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)}
+}
+
+/* ====== COLOR WALL ====== */
+#color-wall {
+  padding: 80px 40px 100px;
+  max-width: 1400px; margin: 0 auto;
+}
+#color-wall .section-header {
+  text-align: center; margin-bottom: 60px;
+}
+#color-wall .section-header h2 {
+  font-size: 1.8rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 8px;
+}
+#color-wall .section-header p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem; letter-spacing: 4px; color: var(--text-light);
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+  gap: 2px;
+}
+.color-cell {
+  aspect-ratio: 1; border-radius: 3px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+  position: relative;
+}
+.color-cell:hover {
+  transform: scale(1.35); z-index: 10;
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.color-cell .tooltip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  background: rgba(60,55,50,0.9); color: #f0ebe6;
+  padding: 6px 12px; border-radius: 4px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.7rem; letter-spacing: 1px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.color-cell:hover .tooltip { opacity: 1; }
+
+/* ====== SEASON FILTER ====== */
+.season-tabs {
+  display: flex; justify-content: center; gap: 24px;
+  margin-bottom: 40px; flex-wrap: wrap;
+}
+.season-tab {
+  padding: 8px 24px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-light);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.8rem; letter-spacing: 2px;
+  cursor: pointer; transition: all 0.3s;
+  border-radius: 2px;
+}
+.season-tab:hover, .season-tab.active {
+  border-color: var(--text); color: var(--text);
+  background: rgba(184,169,154,0.1);
+}
+
+/* ====== RECOMMEND SECTION ====== */
+#recommend {
+  padding: 80px 40px 100px;
+  background: linear-gradient(180deg, transparent, rgba(184,169,154,0.08), transparent);
+}
+.recommend-container {
+  max-width: 680px; margin: 0 auto; text-align: center;
+}
+.recommend-container h2 {
+  font-size: 1.8rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 8px;
+}
+.recommend-container .sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem; letter-spacing: 4px; color: var(--text-light);
+  margin-bottom: 48px;
+}
+.form-group {
+  margin-bottom: 28px; text-align: left;
+}
+.form-group label {
+  display: block; font-size: 0.85rem; letter-spacing: 2px;
+  color: var(--text-light); margin-bottom: 10px;
+  font-family: 'Noto Sans TC', sans-serif; font-weight: 300;
+}
+.form-group input, .form-group select {
+  width: 100%; padding: 14px 16px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.5);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.9rem; color: var(--text);
+  letter-spacing: 1px; outline: none;
+  transition: border-color 0.3s;
+  border-radius: 2px;
+  -webkit-appearance: none;
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--accent);
+}
+.mood-options {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+}
+.mood-btn {
+  padding: 12px 8px;
+  border: 1px solid var(--border); background: transparent;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.8rem; color: var(--text-light);
+  cursor: pointer; transition: all 0.3s;
+  border-radius: 2px; letter-spacing: 1px;
+}
+.mood-btn:hover, .mood-btn.active {
+  border-color: var(--text); color: var(--text);
+  background: rgba(184,169,154,0.1);
+}
+.submit-btn {
+  margin-top: 20px;
+  padding: 16px 64px;
+  border: 1px solid var(--text);
+  background: transparent; color: var(--text);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.95rem; letter-spacing: 6px;
+  cursor: pointer; transition: all 0.4s;
+}
+.submit-btn:hover {
+  background: var(--text); color: var(--bg);
+}
+
+/* ====== RESULT SECTION ====== */
+#result {
+  display: none;
+  padding: 80px 40px 100px;
+  text-align: center;
+}
+#result.show { display: block; }
+.result-color-circle {
+  width: 200px; height: 200px; border-radius: 50%;
+  margin: 0 auto 40px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.1);
+  animation: float 6s ease-in-out infinite;
+  transition: background-color 0.6s ease;
+}
+.result-info h3 {
+  font-size: 2rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 8px;
+}
+.result-info .color-name-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem; letter-spacing: 4px; color: var(--text-light);
+  margin-bottom: 8px;
+}
+.result-info .color-hex {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; letter-spacing: 3px; color: var(--accent);
+  margin-bottom: 32px;
+}
+.result-info .color-poem {
+  font-size: 1rem; line-height: 2.4; font-weight: 300;
+  color: var(--text-light); max-width: 420px; margin: 0 auto 32px;
+}
+.result-info .color-meaning {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.82rem; line-height: 1.9;
+  color: var(--text-light); max-width: 450px; margin: 0 auto 40px;
+  font-weight: 300;
+}
+.share-btn {
+  padding: 12px 40px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text-light);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.8rem; letter-spacing: 3px;
+  cursor: pointer; transition: all 0.3s;
+  margin: 0 8px;
+}
+.share-btn:hover { border-color: var(--text); color: var(--text); }
+
+/* ====== COLOR DETAIL MODAL ====== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(90,85,80,0.4);
+  backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg); padding: 48px; border-radius: 4px;
+  max-width: 420px; width: 90%; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none; font-size: 1.4rem;
+  color: var(--text-light); cursor: pointer;
+}
+.modal-color {
+  width: 100px; height: 100px; border-radius: 50%;
+  margin: 0 auto 24px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+}
+.modal h3 { font-size: 1.4rem; font-weight: 300; letter-spacing: 6px; margin-bottom: 6px; }
+.modal .modal-hex {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; letter-spacing: 3px; color: var(--accent);
+  margin-bottom: 6px;
+}
+.modal .modal-day {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.75rem; color: var(--text-light); letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+.modal .modal-poem {
+  font-size: 0.92rem; line-height: 2.2; color: var(--text-light);
+  font-weight: 300;
+}
+
+/* ====== ABOUT SECTION ====== */
+#about {
+  padding: 80px 40px 100px;
+  text-align: center;
+  max-width: 640px; margin: 0 auto;
+}
+#about h2 {
+  font-size: 1.8rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 8px;
+}
+#about .sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem; letter-spacing: 4px; color: var(--text-light);
+  margin-bottom: 40px;
+}
+#about p {
+  font-size: 0.95rem; line-height: 2.4; font-weight: 300; color: var(--text-light);
+}
+
+/* ====== FOOTER ====== */
+footer {
+  text-align: center; padding: 40px;
+  border-top: 1px solid var(--border);
+}
+footer p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem; letter-spacing: 4px; color: var(--text-light);
+}
+
+/* ====== WELCOME BACK OVERLAY ====== */
+.welcome-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 300;
+  display: none;
+  align-items: center; justify-content: center;
+  animation: fadeInWelcome 0.8s ease;
+}
+.welcome-overlay.show { display: flex; }
+@keyframes fadeInWelcome {
+  from { opacity: 0; } to { opacity: 1; }
+}
+.welcome-content {
+  text-align: center; padding: 40px;
+  max-width: 520px; width: 90%;
+}
+.welcome-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem; letter-spacing: 5px; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.welcome-greeting {
+  font-size: 1.4rem; font-weight: 300; letter-spacing: 6px;
+  color: var(--text); margin-bottom: 40px; line-height: 2;
+}
+.welcome-color-circle {
+  width: 180px; height: 180px; border-radius: 50%;
+  margin: 0 auto 32px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.1);
+  animation: float 6s ease-in-out infinite;
+  transition: background-color 0.6s ease;
+}
+.welcome-color-name {
+  font-size: 2rem; font-weight: 300; letter-spacing: 8px; margin-bottom: 6px;
+}
+.welcome-color-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem; letter-spacing: 4px; color: var(--text-light);
+  margin-bottom: 6px;
+}
+.welcome-hex {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; letter-spacing: 3px; color: var(--accent);
+  margin-bottom: 28px;
+}
+.welcome-poem {
+  font-size: 1rem; line-height: 2.4; font-weight: 300;
+  color: var(--text-light); margin-bottom: 16px;
+}
+.welcome-meaning {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.82rem; line-height: 1.9; color: var(--text-light);
+  font-weight: 300; margin-bottom: 40px;
+}
+.welcome-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.welcome-btn {
+  padding: 14px 40px;
+  border: 1px solid var(--text); background: var(--text); color: var(--bg);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.85rem; letter-spacing: 4px; font-weight: 300;
+  cursor: pointer; transition: all 0.4s;
+}
+.welcome-btn:hover { background: transparent; color: var(--text); }
+.welcome-btn.outline {
+  background: transparent; color: var(--text);
+}
+.welcome-btn.outline:hover {
+  background: var(--text); color: var(--bg);
+}
+.welcome-visit-count {
+  margin-top: 32px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.78rem; letter-spacing: 3px; color: var(--border);
+}
+
+/* ====== COLOR HISTORY DOTS ====== */
+.result-history {
+  display: flex; gap: 8px; justify-content: center;
+  margin-bottom: 32px; flex-wrap: wrap;
+}
+.history-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; transition: transform 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  position: relative;
+}
+.history-dot:hover { transform: scale(1.3); }
+.history-dot .hist-tip {
+  position: absolute; bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  background: rgba(60,55,50,0.9); color: #f0ebe6;
+  padding: 4px 10px; border-radius: 3px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.65rem; letter-spacing: 1px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.history-dot:hover .hist-tip { opacity: 1; }
+.history-label {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.72rem; color: var(--text-light);
+  letter-spacing: 2px; margin-bottom: 12px; font-weight: 300;
+}
+
+/* ====== SCROLL ANIMATION ====== */
+.fade-in {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  nav { padding: 12px 20px; }
+  nav .nav-links { gap: 16px; }
+  nav .nav-links a { font-size: 0.75rem; }
+  #hero h1 { font-size: 2.4rem; letter-spacing: 10px; }
+  #hero { padding: 100px 24px 40px; }
+  #color-wall { padding: 60px 16px 80px; }
+  .color-grid { grid-template-columns: repeat(auto-fill, minmax(24px, 1fr)); gap: 2px; }
+  #recommend { padding: 60px 24px 80px; }
+  .mood-options { grid-template-columns: repeat(2, 1fr); }
+  .modal { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="title-jp">日日一色</div>
+  <div class="subtitle">daily color</div>
+  <div class="loading-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- Navigation -->
+<nav>
+  <div class="logo" onclick="scrollToSection('hero')">
+    日日一色
+    <span>daily color</span>
+  </div>
+  <ul class="nav-links">
+    <a onclick="scrollToSection('color-wall')">三六五色</a>
+    <a onclick="scrollToSection('recommend')">今日一色</a>
+    <a onclick="scrollToSection('about')">關於</a>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section id="hero">
+  <div class="today-preview" id="todayPreview"></div>
+  <h1>日日一色</h1>
+  <div class="en-title">Daily Color</div>
+  <p class="tagline">
+    每一天，都有一個屬於你的顏色。<br>
+    在溫柔的色彩裡，找到今日的自己。
+  </p>
+  <button class="cta-btn" onclick="scrollToSection('recommend')">尋找今日之色</button>
+</section>
+
+<!-- Color Wall Section -->
+<section id="color-wall" class="fade-in">
+  <div class="section-header">
+    <h2>千色圖鑑</h2>
+    <p>1,095 Morandi Colors</p>
+  </div>
+  <div class="season-tabs">
+    <button class="season-tab active" data-season="all">全部</button>
+    <button class="season-tab" data-season="spring">春 Spring</button>
+    <button class="season-tab" data-season="summer">夏 Summer</button>
+    <button class="season-tab" data-season="autumn">秋 Autumn</button>
+    <button class="season-tab" data-season="winter">冬 Winter</button>
+  </div>
+  <div class="color-grid" id="colorGrid"></div>
+</section>
+
+<!-- Recommend Section -->
+<section id="recommend" class="fade-in">
+  <div class="recommend-container">
+    <h2>今日一色</h2>
+    <p class="sub">Find Your Color</p>
+
+    <div class="form-group">
+      <label>你的生日 Birthday</label>
+      <input type="date" id="birthday" />
+    </div>
+
+    <div class="form-group">
+      <label>血型 Blood Type</label>
+      <select id="bloodType">
+        <option value="">請選擇</option>
+        <option value="A">A 型</option>
+        <option value="B">B 型</option>
+        <option value="AB">AB 型</option>
+        <option value="O">O 型</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>今天的心情 Today's Mood</label>
+      <div class="mood-options">
+        <button class="mood-btn" data-mood="peaceful">平靜</button>
+        <button class="mood-btn" data-mood="happy">愉悅</button>
+        <button class="mood-btn" data-mood="melancholy">微憂</button>
+        <button class="mood-btn" data-mood="energetic">元氣</button>
+        <button class="mood-btn" data-mood="romantic">浪漫</button>
+        <button class="mood-btn" data-mood="reflective">沉思</button>
+        <button class="mood-btn" data-mood="dreamy">夢幻</button>
+        <button class="mood-btn" data-mood="warm">溫暖</button>
+      </div>
+    </div>
+
+    <button class="submit-btn" onclick="getMyColor()">尋色</button>
+  </div>
+</section>
+
+<!-- Welcome Back Overlay (returning users) -->
+<div id="welcomeBack" class="welcome-overlay">
+  <div class="welcome-content">
+    <p class="welcome-date" id="welcomeDate"></p>
+    <p class="welcome-greeting" id="welcomeGreeting"></p>
+    <div class="welcome-color-circle" id="welcomeCircle"></div>
+    <h3 class="welcome-color-name" id="welcomeColorName"></h3>
+    <p class="welcome-color-en" id="welcomeColorEn"></p>
+    <p class="welcome-hex" id="welcomeHex"></p>
+    <p class="welcome-poem" id="welcomePoem"></p>
+    <p class="welcome-meaning" id="welcomeMeaning"></p>
+    <div class="welcome-actions">
+      <button class="welcome-btn" onclick="closeWelcome()">繼續探索</button>
+      <button class="welcome-btn outline" onclick="changeMood()">今天換個心情</button>
+    </div>
+    <p class="welcome-visit-count" id="welcomeVisitCount"></p>
+  </div>
+</div>
+
+<!-- Result Section -->
+<section id="result">
+  <div class="result-color-circle" id="resultCircle"></div>
+  <div class="result-info">
+    <h3 id="resultName"></h3>
+    <p class="color-name-en" id="resultNameEn"></p>
+    <p class="color-hex" id="resultHex"></p>
+    <p class="color-poem" id="resultPoem"></p>
+    <p class="color-meaning" id="resultMeaning"></p>
+    <div class="result-history" id="resultHistory"></div>
+    <button class="share-btn" onclick="copyColor()">複製色號</button>
+    <button class="share-btn" onclick="getMyColor()">再次尋色</button>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="fade-in">
+  <h2>關於日日一色</h2>
+  <p class="sub">About Daily Color</p>
+  <p>
+    日日一色，是一個溫柔的色彩計畫。<br><br>
+    我們相信，每一天都有屬於它的顏色，而每個人看見的色彩也不盡相同。<br><br>
+    以莫蘭迪色系為靈感，我們調配了 1,095 個如霧般柔和的色調。<br>
+    透過你的生日、心情與血型，為你每日推薦一色——<br>
+    那是今天的你，最適合的色彩溫度。<br><br>
+    願每一天，都有一抹溫柔的顏色陪伴。
+  </p>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>daily color &copy; 2026 &mdash; a gentle palette for every day</p>
+</footer>
+
+<!-- Color Detail Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-color" id="modalColor"></div>
+    <h3 id="modalName"></h3>
+    <p class="modal-hex" id="modalHex"></p>
+    <p class="modal-day" id="modalDay"></p>
+    <p class="modal-poem" id="modalPoem"></p>
+  </div>
+</div>
+
+<script>
+// ====================================================================
+//  1095 MORANDI COLORS (365×3) - Algorithmically generated
+// ====================================================================
+const TOTAL_COLORS = 1095;
+const MORANDI_365 = generateMorandiPalette(); // kept var name for compatibility
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
+function generateMorandiPalette() {
+  const colors = [];
+
+  // 24 hue-range bases covering the full Morandi spectrum, x3 lightness layers
+  const bases = [
+    // Pinks & Roses
+    {h:[340,360],s:[14,30]}, {h:[0,15],s:[16,32]}, {h:[330,350],s:[12,26]},
+    // Peaches & Warm
+    {h:[15,35],s:[18,34]}, {h:[35,55],s:[16,30]}, {h:[20,40],s:[14,28]},
+    // Yellows & Warm Neutrals
+    {h:[45,65],s:[14,26]}, {h:[55,75],s:[10,22]},
+    // Greens
+    {h:[80,110],s:[10,24]}, {h:[110,145],s:[12,26]}, {h:[90,130],s:[8,20]},
+    // Teals
+    {h:[150,180],s:[12,26]}, {h:[160,190],s:[10,22]},
+    // Blues
+    {h:[195,225],s:[14,30]}, {h:[200,235],s:[16,34]}, {h:[180,210],s:[10,24]},
+    // Indigos
+    {h:[220,250],s:[10,24]}, {h:[235,260],s:[8,22]},
+    // Purples & Lavenders
+    {h:[260,290],s:[10,26]}, {h:[280,310],s:[8,22]}, {h:[270,300],s:[12,28]},
+    // Mauves
+    {h:[310,340],s:[10,24]}, {h:[300,330],s:[8,20]},
+    // Warm grays
+    {h:[20,50],s:[5,16]},
+  ];
+
+  // 3 lightness layers: light / medium / deep Morandi
+  const layers = [
+    {l:[76,88], label:'淡'},  // light
+    {l:[66,78], label:'中'},  // medium
+    {l:[56,68], label:'深'},  // deep
+  ];
+
+  // Season assignments by index (each ~274 colors)
+  const seasonOf = i => {
+    if (i < 274) return 'spring';
+    if (i < 548) return 'summer';
+    if (i < 822) return 'autumn';
+    return 'winter';
+  };
+
+  // Comprehensive name building blocks (combine prefix + suffix)
+  const cnPrefixes = ['霧','煙','淡','薄','微','輕','柔','素','暮','曉','遠','靜','隱','朦','幽','寂','清','涼','暖','初','古','枯','蒼','冷','空','深','沉','透','浮','流'];
+  const cnSuffixes = {
+    spring: ['櫻','桃','杏','柳','竹','荷','蘭','梅','藤','菫','芍','茉','蕊','萱','芷','蒔','薇','葵','蘿','苺','芙','蕉','莓','菊','蓮','萍','荻','蘋','蓍','芹'],
+    summer: ['藍','碧','青','翠','海','波','泉','水','湖','嵐','潮','雲','霜','露','瀑','溪','漪','瀾','澄','渚','汀','津','渡','淵','瀲','灧','沫','漾','涓','浦'],
+    autumn: ['楓','褐','棕','栗','柿','橡','桂','楠','檀','杉','榛','椿','櫸','梧','柏','松','槐','楸','桐','樟','柚','榆','楊','栢','橘','棗','柘','檜','樺','楮'],
+    winter: ['灰','銀','雪','霜','冰','石','鐵','鉛','墨','煤','玉','珀','瓷','琉','晶','珠','璃','礦','硯','磐','巖','礫','砂','岩','泥','壤','霰','凝','凍','璧'],
+  };
+  const enPrefixes = ['Mist','Smoke','Pale','Thin','Faint','Soft','Gentle','Plain','Dusk','Dawn','Far','Still','Hidden','Hazy','Deep','Quiet','Clear','Cool','Warm','First','Ancient','Dry','Grey','Cold','Void','Rich','Dim','Sheer','Float','Flow'];
+  const enSuffixes = {
+    spring: ['Cherry','Peach','Apricot','Willow','Bamboo','Lotus','Orchid','Plum','Vine','Violet','Peony','Jasmine','Petal','Lily','Iris','Rose','Fern','Clover','Ivy','Berry','Bloom','Bud','Moss','Poppy','Sage','Daisy','Thyme','Mint','Basil','Heather'],
+    summer: ['Blue','Cyan','Teal','Jade','Sea','Wave','Spring','Water','Lake','Haze','Tide','Cloud','Frost','Dew','Falls','Creek','Ripple','Swell','Azure','Shore','Bay','Ford','Ferry','Abyss','Shimmer','Gleam','Foam','Flow','Brook','Cove'],
+    autumn: ['Maple','Umber','Brown','Chestnut','Persimmon','Oak','Osmanthus','Cedar','Sandal','Fir','Hazel','Camellia','Birch','Parasol','Cypress','Pine','Acacia','Catalpa','Paulownia','Camphor','Citrus','Elm','Poplar','Juniper','Tangerine','Jujube','Mulberry','Teak','Walnut','Hemp'],
+    winter: ['Gray','Silver','Snow','Frost','Ice','Stone','Iron','Lead','Ink','Coal','Jade','Amber','Porcelain','Glaze','Crystal','Pearl','Glass','Ore','Slate','Rock','Cliff','Gravel','Sand','Crag','Clay','Earth','Sleet','Frozen','Rime','Gem'],
+  };
+
+  // Poems pool (40 per season for rich variety)
+  const poems = {
+    spring: ['如三月的第一朵花','雲間漏下的暖意','枝頭輕輕搖曳的嫩芽','風裡帶著花香','被雨洗淨的天空',
+      '靜靜綻放的溫柔','像春天寫給你的一封信','清晨露水映射的光','花瓣落在溪水上','春風裡最輕的嘆息',
+      '陽光穿過嫩葉的縫隙','泥土裡甦醒的氣息','蝴蝶停在指尖的瞬間','窗台上發芽的種子','溪邊綻放的第一抹綠',
+      '微雨中漫步的浪漫','花園裡蜜蜂的低語','春日午後的一場白日夢','被風吹散的蒲公英','晨曦裡露珠的折射',
+      '竹林裡穿透的光線','遠山如黛的溫柔','柳絮飄過古橋的午後','桃花源裡的片刻寧靜','春水初生的靜謐',
+      '枝上含苞的期待','暖陽下微微搖曳的影','花信風帶來的訊息','芽尖上凝結的一滴雨','石階上苔蘚的新綠',
+      '院子裡梅花的餘韻','清風拂過的一瞬溫柔','蜻蜓掠過水面的輕盈','山茶花落入茶杯的聲音','雨後天青的寧靜',
+      '窗邊一束淡粉的花影','黎明前天空最溫柔的時刻','春天第一縷微風的觸感','草地上露水蒸發的清新','溪谷中迴盪的鳥鳴'],
+    summer: ['午後的海風帶來的涼意','蟬鳴聲裡的一抹靜','夏日的雨後天晴','水面上輕輕的漣漪','像一杯冰鎮的花茶',
+      '薄暮時分的天際線','海浪輕吻沙灘的聲音','盛夏裡最溫柔的風','雲朵投下的淡影','蔚藍裡最深的寧靜',
+      '冰塊融化時的透明','月光映在海面上的銀','深夜泳池裡的寂靜','雷雨過後空氣的清冽','竹簾後搖曳的風鈴',
+      '薄荷葉上凝結的水珠','傍晚海邊的一抹橘藍','夏夜星空下的呢喃','浮在水面的睡蓮','冰淇淋融化的那一刻',
+      '颱風前最寧靜的天空','山泉水流過手指的涼','夏末最後一場暴雨','蛙鳴伴隨的夜色','露天陽台上的微風',
+      '冰鎮西瓜的第一口甜','玻璃杯上凝結的水珠','午後雷陣雨的序曲','椰子樹影搖曳的節奏','退潮後沙灘上的貝殼',
+      '泳池水面反射的天光','夏日祭典的燈籠微光','深海裡最靜謐的藍','清晨薄霧覆蓋的湖面','風吹過稻田的波浪',
+      '仲夏夜最長的一段夢','冰塊碰撞玻璃的聲音','雲層縫隙間的天光','水族館裡的深藍幻影','雨滴打在荷葉上的聲音'],
+    autumn: ['第一片落葉的溫度','夕陽染紅的窗櫺','秋風裡飄散的桂香','一杯溫熱的焙茶','枯枝上最後的堅持',
+      '黃昏裡最暖的光線','山間霧氣裡的呢喃','時光慢慢沉澱的色彩','秋日午後的寧靜','收穫季節的溫潤',
+      '稻穗彎腰的謙遜','壁爐裡劈啪作響的柴火','松果落地的輕響','舊書頁泛黃的邊緣','紅葉鋪滿的石板路',
+      '晚風中飄來的木質香','柿子在枝頭成熟的暖','深山裡最後一縷炊煙','毛衣上停留的陽光','一杯肉桂拿鐵的溫度',
+      '糖炒栗子的香氣','窗外細雨打在落葉上','暮色中遠處鐘聲的迴盪','楓葉從指間滑落的瞬間','野菊花開在路邊的倔強',
+      '銀杏葉鋪成的金色地毯','老屋簷下燕子的呢喃','秋收後稻田裡的寧靜','霜降前最後一抹夕照','蘑菇在樹根旁的安靜',
+      '木質書桌上的光影','老茶壺裡陳年的香氣','秋天第一件外套的溫暖','曬穀場上金色的午後','柚子皮散發的清香',
+      '橘紅色夕陽下的剪影','風乾花束的復古氣息','深巷裡傳來的二胡聲','一封手寫信的墨香','雁群飛過天際的弧線'],
+    winter: ['第一場雪的沉默','冬日窗上的霜花','壁爐旁微弱的光','最安靜的夜裡的溫度','像一件柔軟的毛衣',
+      '冬晨裡凝結的呼吸','雪地上最淡的足跡','寒風裡不滅的暖意','冬日最短的午後','月光灑在雪地上',
+      '熱巧克力上方的蒸氣','冰柱融化時的滴答聲','凌晨四點的寂靜','厚被子裡蜷縮的安心','窗外飄雪的無聲',
+      '暖氣片上烘乾的手套','冬夜裡最亮的一顆星','松林覆雪後的莊嚴','呼出白霧的瞬間','結冰湖面下的靜止',
+      '冬至那碗湯圓的甜','落雪覆蓋一切的平靜','暮色中亮起的路燈','圍巾裡殘留的體溫','枯樹枝上結的霜',
+      '深冬裡最長的夜晚','屋簷下冰凌的透明','雪花落在睫毛上的輕','年末最後一頁日曆','壁爐火焰跳動的溫柔',
+      '霜降後第一口冷空氣','古寺鐘聲在雪夜迴盪','冬天窗台上的水仙花','棉被曬過太陽的味道','熱紅酒的肉桂與丁香',
+      '結霜的玻璃上畫的畫','融雪時屋簷滴水的節奏','冬日圖書館裡的靜謐','午後三點微弱的陽光','遠方煙囪升起的白煙'],
+  };
+
+  const rng = seededRandom(20260329);
+
+  for (let i = 0; i < TOTAL_COLORS; i++) {
+    const layerIdx = i % 3;
+    const baseIdx = Math.floor(i / 3) % bases.length;
+    const layer = layers[layerIdx];
+    const base = bases[baseIdx];
+    const season = seasonOf(i);
+
+    // Generate unique h/s/l with deterministic randomness
+    const r1 = rng(), r2 = rng(), r3 = rng();
+    const h = Math.round(base.h[0] + r1 * (base.h[1] - base.h[0]));
+    const s = Math.round(base.s[0] + r2 * (base.s[1] - base.s[0]));
+    const l = Math.round(layer.l[0] + r3 * (layer.l[1] - layer.l[0]));
+
+    // Build name from prefix + suffix combos (cycles through uniquely)
+    const pIdx = i % cnPrefixes.length;
+    const sIdx = Math.floor(i / cnPrefixes.length) % cnSuffixes[season].length;
+    const nameCn = cnPrefixes[pIdx] + cnSuffixes[season][sIdx];
+    const nameEn = enPrefixes[pIdx] + ' ' + enSuffixes[season][sIdx];
+    const poem = poems[season][i % poems[season].length];
+
+    colors.push({
+      day: i + 1,
+      season,
+      h, s, l,
+      hex: hslToHex(h, s, l),
+      nameCn,
+      nameEn,
+      poem,
+    });
+  }
+  return colors;
+}
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const a = s * Math.min(l, 1 - l);
+  const f = n => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+// ====================================================================
+//  RENDER COLOR GRID
+// ====================================================================
+function renderColorGrid(filter = 'all') {
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = '';
+  const filtered = filter === 'all' ? MORANDI_365 : MORANDI_365.filter(c => c.season === filter);
+
+  // Use DocumentFragment for better performance with 1095 colors
+  const frag = document.createDocumentFragment();
+  filtered.forEach((color) => {
+    const cell = document.createElement('div');
+    cell.className = 'color-cell';
+    cell.style.background = color.hex;
+    cell.innerHTML = `<div class="tooltip">${color.nameCn} ${color.hex}</div>`;
+    cell.onclick = () => openModal(color);
+    frag.appendChild(cell);
+  });
+  grid.appendChild(frag);
+}
+
+// ====================================================================
+//  MODAL
+// ====================================================================
+function openModal(color) {
+  document.getElementById('modalColor').style.background = color.hex;
+  document.getElementById('modalName').textContent = color.nameCn;
+  document.getElementById('modalHex').textContent = color.hex.toUpperCase();
+  document.getElementById('modalDay').textContent = `Day ${color.day} · ${seasonLabel(color.season)}`;
+  document.getElementById('modalPoem').textContent = color.poem;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+function seasonLabel(s) {
+  return { spring:'春', summer:'夏', autumn:'秋', winter:'冬' }[s];
+}
+
+// ====================================================================
+//  LOCAL STORAGE - SAVE & LOAD USER PROFILE
+// ====================================================================
+const STORAGE_KEY = 'dailycolor_user';
+const HISTORY_KEY = 'dailycolor_history';
+
+function saveUserProfile(birthday, bloodType, mood) {
+  const profile = { birthday, bloodType, mood, lastVisit: new Date().toISOString() };
+  // Update visit count
+  const existing = loadUserProfile();
+  profile.visitCount = existing ? (existing.visitCount || 0) + 1 : 1;
+  profile.firstVisit = existing ? existing.firstVisit : new Date().toISOString();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+}
+
+function loadUserProfile() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch { return null; }
+}
+
+function saveColorToHistory(colorData) {
+  try {
+    let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    const today = new Date().toISOString().slice(0, 10);
+    // Only one entry per day
+    if (history.length > 0 && history[history.length - 1].date === today) {
+      history[history.length - 1] = { ...colorData, date: today };
+    } else {
+      history.push({ ...colorData, date: today });
+    }
+    // Keep last 30 days
+    if (history.length > 30) history = history.slice(-30);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  } catch {}
+}
+
+function loadColorHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  } catch { return []; }
+}
+
+// ====================================================================
+//  MOOD MEANINGS
+// ====================================================================
+const moodMeanings = {
+  peaceful: '今天的你，像一片靜謐的湖面，倒映著最溫柔的天空。這個顏色提醒你，安靜也是一種力量。',
+  happy: '快樂在你的眼中閃爍，今天的色彩如陽光般明媚。讓這份愉悅感染你身邊的每一個人。',
+  melancholy: '微憂的日子裡，這抹淡色是你最好的陪伴。不必勉強微笑，溫柔地感受此刻就好。',
+  energetic: '元氣滿滿的你，今天適合這個充滿活力的色調。帶著這份能量，去擁抱世界吧。',
+  romantic: '浪漫的心緒化作這一抹柔色。今天的你，值得被溫柔以待。',
+  reflective: '沉思的時刻，這個深邃的色調正好。靜下心來，聽聽內心的聲音。',
+  dreamy: '夢幻的色彩裡，藏著你對世界最美的想像。繼續做夢吧，夢想是最好的顏色。',
+  warm: '溫暖如你，今天的色彩像一杯熱可可。把這份暖意傳遞給你在乎的人。',
+};
+
+const moodLabels = {
+  peaceful:'平靜', happy:'愉悅', melancholy:'微憂', energetic:'元氣',
+  romantic:'浪漫', reflective:'沉思', dreamy:'夢幻', warm:'溫暖',
+};
+
+// ====================================================================
+//  CORE COLOR CALCULATION (reusable)
+// ====================================================================
+function calculateColor(birthday, bloodType, mood) {
+  const today = new Date();
+  const bday = new Date(birthday);
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(),0,1)) / 86400000) + 1;
+
+  let seed = (bday.getMonth() + 1) * 31 + bday.getDate();
+  seed += {'A':7,'B':13,'AB':19,'O':23,'':3}[bloodType] * 17;
+  seed += mood.length * 11;
+  seed += dayOfYear * 37;
+  seed += today.getFullYear() * 3;
+
+  const moodShift = {
+    peaceful: 0, happy: 45, melancholy: 210, energetic: 30,
+    romantic: 330, reflective: 250, dreamy: 270, warm: 20,
+  };
+
+  const baseIndex = ((seed * 16807) % 2147483647) % TOTAL_COLORS;
+  const baseColor = MORANDI_365[baseIndex];
+  const shift = moodShift[mood] || 0;
+  let newH = (baseColor.h + Math.round(shift * 0.3)) % 360;
+  const bloodSatMod = {'A':0,'B':3,'AB':-2,'O':2,'':0}[bloodType];
+  let newS = Math.max(8, Math.min(38, baseColor.s + bloodSatMod));
+  let newL = baseColor.l;
+  const resultHex = hslToHex(newH, newS, newL);
+
+  return {
+    hex: resultHex,
+    nameCn: baseColor.nameCn,
+    nameEn: baseColor.nameEn,
+    poem: baseColor.poem,
+    meaning: moodMeanings[mood] || moodMeanings['peaceful'],
+    mood,
+  };
+}
+
+// ====================================================================
+//  PERSONALIZED COLOR RECOMMENDATION
+// ====================================================================
+function getMyColor() {
+  const birthday = document.getElementById('birthday').value;
+  const bloodType = document.getElementById('bloodType').value;
+  const moodEl = document.querySelector('.mood-btn.active');
+  const mood = moodEl ? moodEl.dataset.mood : 'peaceful';
+
+  if (!birthday) {
+    alert('請選擇你的生日');
+    return;
+  }
+
+  // Save user profile to localStorage
+  saveUserProfile(birthday, bloodType, mood);
+
+  const color = calculateColor(birthday, bloodType, mood);
+
+  // Save to daily history
+  saveColorToHistory(color);
+
+  // Display result
+  showResult(color);
+
+  // Show history dots
+  renderHistory();
+}
+
+function showResult(color) {
+  document.getElementById('resultCircle').style.background = color.hex;
+  document.getElementById('resultName').textContent = color.nameCn;
+  document.getElementById('resultNameEn').textContent = color.nameEn;
+  document.getElementById('resultHex').textContent = color.hex.toUpperCase();
+  document.getElementById('resultPoem').textContent = color.poem;
+  document.getElementById('resultMeaning').textContent = color.meaning;
+
+  const resultSection = document.getElementById('result');
+  resultSection.classList.add('show');
+  resultSection.scrollIntoView({ behavior: 'smooth' });
+
+  window._currentColor = color.hex;
+}
+
+function renderHistory() {
+  const history = loadColorHistory();
+  const container = document.getElementById('resultHistory');
+  if (history.length <= 1) { container.innerHTML = ''; return; }
+
+  let html = '<p class="history-label">你的色彩足跡</p>';
+  history.slice(-14).forEach(item => {
+    const dateLabel = item.date.slice(5).replace('-', '/');
+    const moodLabel = moodLabels[item.mood] || '';
+    html += `<div class="history-dot" style="background:${item.hex}">
+      <span class="hist-tip">${dateLabel} ${item.nameCn} ${moodLabel}</span>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ====================================================================
+//  WELCOME BACK (Returning Users)
+// ====================================================================
+function showWelcomeBack(profile) {
+  const color = calculateColor(profile.birthday, profile.bloodType, profile.mood);
+  saveColorToHistory(color);
+
+  const today = new Date();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dateStr = `${months[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
+
+  // Time-based greeting
+  const hour = today.getHours();
+  let greeting;
+  if (hour < 6) greeting = '夜深了，願這抹色彩陪你入眠';
+  else if (hour < 12) greeting = '早安，今天也有專屬於你的顏色';
+  else if (hour < 18) greeting = '午安，帶著這抹色彩度過午後';
+  else greeting = '晚安，今日之色溫柔如夜';
+
+  document.getElementById('welcomeDate').textContent = dateStr;
+  document.getElementById('welcomeGreeting').textContent = greeting;
+  document.getElementById('welcomeCircle').style.background = color.hex;
+  document.getElementById('welcomeColorName').textContent = color.nameCn;
+  document.getElementById('welcomeColorEn').textContent = color.nameEn;
+  document.getElementById('welcomeHex').textContent = color.hex.toUpperCase();
+  document.getElementById('welcomePoem').textContent = color.poem;
+  document.getElementById('welcomeMeaning').textContent = color.meaning;
+
+  const visitCount = profile.visitCount || 1;
+  document.getElementById('welcomeVisitCount').textContent =
+    `這是你第 ${visitCount} 次造訪日日一色`;
+
+  document.getElementById('welcomeBack').classList.add('show');
+
+  // Also pre-fill the form
+  document.getElementById('birthday').value = profile.birthday;
+  document.getElementById('bloodType').value = profile.bloodType;
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mood === profile.mood);
+  });
+}
+
+function closeWelcome() {
+  const overlay = document.getElementById('welcomeBack');
+  overlay.style.transition = 'opacity 0.6s ease';
+  overlay.style.opacity = '0';
+  setTimeout(() => {
+    overlay.classList.remove('show');
+    overlay.style.opacity = '';
+    overlay.style.transition = '';
+  }, 600);
+}
+
+function changeMood() {
+  closeWelcome();
+  setTimeout(() => scrollToSection('recommend'), 700);
+}
+
+// ====================================================================
+//  CHECK IF RETURNING USER & AUTO-UPDATE VISIT
+// ====================================================================
+function checkReturningUser() {
+  const profile = loadUserProfile();
+  if (!profile || !profile.birthday) return false;
+
+  // Check if last visit was a different day (show welcome for each new day)
+  const lastDate = profile.lastVisit ? profile.lastVisit.slice(0, 10) : '';
+  const todayDate = new Date().toISOString().slice(0, 10);
+
+  // Update visit count for new day
+  if (lastDate !== todayDate) {
+    profile.visitCount = (profile.visitCount || 0) + 1;
+  }
+  profile.lastVisit = new Date().toISOString();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+
+  showWelcomeBack(profile);
+  return true;
+}
+
+function copyColor() {
+  if (window._currentColor) {
+    navigator.clipboard.writeText(window._currentColor).then(() => {
+      const btn = event.target;
+      btn.textContent = '已複製！';
+      setTimeout(() => { btn.textContent = '複製色號'; }, 2000);
+    });
+  }
+}
+
+// ====================================================================
+//  MOOD BUTTON SELECTION
+// ====================================================================
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// ====================================================================
+//  SEASON TAB SELECTION
+// ====================================================================
+document.querySelectorAll('.season-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.season-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderColorGrid(tab.dataset.season);
+  });
+});
+
+// ====================================================================
+//  SCROLL ANIMATIONS
+// ====================================================================
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ====================================================================
+//  MODAL CLOSE ON OVERLAY CLICK
+// ====================================================================
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+// ====================================================================
+//  SET TODAY'S PREVIEW COLOR
+// ====================================================================
+function setTodayPreview() {
+  const today = new Date();
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(),0,1)) / 86400000);
+  const todayColor = MORANDI_365[dayOfYear % TOTAL_COLORS];
+  document.getElementById('todayPreview').style.background = todayColor.hex;
+}
+
+// ====================================================================
+//  INIT
+// ====================================================================
+window.addEventListener('load', () => {
+  renderColorGrid();
+  setTodayPreview();
+
+  const isReturning = checkReturningUser();
+
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+  }, isReturning ? 800 : 1200);
+
+  // Pre-fill form if we have saved data but didn't show welcome
+  if (!isReturning) {
+    const profile = loadUserProfile();
+    if (profile && profile.birthday) {
+      document.getElementById('birthday').value = profile.birthday;
+      document.getElementById('bloodType').value = profile.bloodType || '';
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mood === profile.mood);
+      });
+    }
+  }
+});
+</script>
+</body>
+</html>
