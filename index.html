@@ -365,12 +365,28 @@ nav .nav-links a:hover { color: var(--text); }
 
 /* ====== FOOTER ====== */
 footer {
-  text-align: center; padding: 40px;
+  text-align: center; padding: 40px 20px;
   border-top: 1px solid var(--border);
 }
 footer p {
   font-family: 'Cormorant Garamond', serif;
   font-size: 0.8rem; letter-spacing: 4px; color: var(--text-light);
+}
+.footer-links {
+  margin-top: 24px; display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
+}
+.footer-links a {
+  text-decoration: none; color: var(--text-light);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 0.82rem; font-weight: 300; letter-spacing: 1.5px;
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--text); }
+.footer-desc {
+  margin-top: 16px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 0.78rem; color: var(--text-light); opacity: 0.7;
+  letter-spacing: 1px; font-weight: 300;
 }
 
 /* ====== WELCOME BACK OVERLAY ====== */
@@ -640,6 +656,12 @@ footer p {
 <!-- Footer -->
 <footer>
   <p>daily color &copy; 2026 &mdash; a gentle palette for every day</p>
+  <div class="footer-links">
+    <a href="https://dailynews.getlessen.com/">日日一報</a>
+    <a href="https://dailypoem.getlessen.com/">日日一詩</a>
+    <a href="https://dailycolor.getlessen.com/">日日一色</a>
+  </div>
+  <p class="footer-desc">每一天，都值得被溫柔以待。用文字、詩句與色彩，陪你度過日常。</p>
 </footer>
 
 <!-- Color Detail Modal -->
