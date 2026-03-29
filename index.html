@@ -122,7 +122,7 @@ nav .nav-links a:hover { color: var(--text); }
   width: 120px; height: 120px; border-radius: 50%;
   margin: 0 auto 32px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-  transition: transform 0.6s ease;
+  transition: transform 0.6s ease, background 1.5s ease;
   animation: float 6s ease-in-out infinite;
 }
 @keyframes float {
@@ -1166,10 +1166,16 @@ document.getElementById('modal').addEventListener('click', (e) => {
 //  SET TODAY'S PREVIEW COLOR
 // ====================================================================
 function setTodayPreview() {
+  const el = document.getElementById('todayPreview');
   const today = new Date();
   const dayOfYear = Math.floor((today - new Date(today.getFullYear(),0,1)) / 86400000);
-  const todayColor = MORANDI_365[dayOfYear % TOTAL_COLORS];
-  document.getElementById('todayPreview').style.background = todayColor.hex;
+  let idx = dayOfYear % TOTAL_COLORS;
+  el.style.background = MORANDI_365[idx].hex;
+
+  setInterval(() => {
+    idx = (idx + 1) % TOTAL_COLORS;
+    el.style.background = MORANDI_365[idx].hex;
+  }, 3000);
 }
 
 // ====================================================================
