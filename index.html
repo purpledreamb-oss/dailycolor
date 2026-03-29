@@ -531,7 +531,6 @@ footer p {
     <span>daily color</span>
   </div>
   <ul class="nav-links">
-    <a onclick="scrollToSection('color-wall')">三六五色</a>
     <a onclick="scrollToSection('recommend')">今日一色</a>
     <a onclick="scrollToSection('about')">關於</a>
   </ul>
@@ -550,18 +549,8 @@ footer p {
 </section>
 
 <!-- Color Wall Section -->
-<section id="color-wall" class="fade-in">
-  <div class="section-header">
-    <h2>千色圖鑑</h2>
-    <p>1,095 Morandi Colors</p>
-  </div>
-  <div class="season-tabs">
-    <button class="season-tab active" data-season="all">全部</button>
-    <button class="season-tab" data-season="spring">春 Spring</button>
-    <button class="season-tab" data-season="summer">夏 Summer</button>
-    <button class="season-tab" data-season="autumn">秋 Autumn</button>
-    <button class="season-tab" data-season="winter">冬 Winter</button>
-  </div>
+<!-- color-wall section hidden -->
+<section id="color-wall" style="display:none;">
   <div class="color-grid" id="colorGrid"></div>
 </section>
 
